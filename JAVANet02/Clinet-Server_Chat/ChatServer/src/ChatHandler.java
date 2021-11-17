@@ -1,6 +1,8 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
+import java.util.StringTokenizer;
 
 public class ChatHandler implements Runnable {
     private String name;
@@ -18,7 +20,35 @@ public class ChatHandler implements Runnable {
     }
 
     @Override
-    public void run() { //
+    public void run() {
         System.out.println(name + " is chatting...");
+        String received;
+        while(true){
+            try {
+                received = dis.readUTF();
+                System.out.println("Message : " + received + " from " + name);
+                if(received.equals("Bye")) break;
+                if(!received.contains("#")){
+                    continue;
+                }
+                StringTokenizer tokenizer = new StringTokenizer(received, "#");
+                String who = tokenizer.nextToken();
+                String msg = tokenizer.nextToken();
+                for(ChatHandler c : ChatServer.clients){
+                    if(c.name.equals(who) && c.isSignin){
+                        c.dos.writeUTF(who + " >> " + msg);
+                        break;
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        try {
+            s.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

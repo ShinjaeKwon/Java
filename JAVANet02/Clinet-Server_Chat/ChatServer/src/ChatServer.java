@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.Vector;
 
 public class ChatServer {
-    static Vector<ChatHandler> clients = new Vector<>();
+    static Vector<ChatHandler> clients = new Vector<>(); //클라이언트들이 저장될 벡터
     public static void main(String[] args) throws IOException {
         ServerSocket ss = new ServerSocket(3005);
         while(true){
